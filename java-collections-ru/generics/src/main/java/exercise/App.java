@@ -38,15 +38,13 @@ class App{
         List<Map<String, String>> result = App.findWhere(books, where);
         System.out.println(result);
     }
-    public static <T> List<Map<String, String>> findWhere(List<Map<String, String>> list, Map<String, String> map){
+    public static List<Map<String, String>> findWhere(List<Map<String, String>> list, Map<String, String> map){
         List<Map<String, String>> result = new ArrayList<>();
         for (Map<String, String> listItem: list) {
-            //int count = 0;
             boolean find = true;
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 if (!listItem.containsKey(entry.getKey()) || !listItem.containsValue(entry.getValue())) {
                     find = false;
-                    //count++;
                 }
             }
             if (find) {
