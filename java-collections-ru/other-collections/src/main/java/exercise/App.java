@@ -20,44 +20,24 @@ class App {
     }
 
     public static LinkedHashMap<String, String> genDiff(Map<String, Object> map1, Map<String, Object> map2) {
-        Set<Object> setValues1 = new HashSet<>();
-        Set<Object> setValues2 = new HashSet<>();
-        Set<String> setKeys1 = new HashSet<>(map1.keySet());
-        Set<String> setKeys2 = new HashSet<>(map2.keySet());
+
         LinkedHashMap<String, String> result = new LinkedHashMap<>();
-        for (Map.Entry<String, Object> item : map1.entrySet()) {
-            setValues1.add(item.getValue());
-        }
-        for (Map.Entry<String, Object> item : map2.entrySet()) {
-            setValues2.add(item.getValue());
-        }
-        Set<Object> intersectionValues = new HashSet<>();
-        intersectionValues.addAll(setValues1);
-        intersectionValues.retainAll(setValues2);
+        Set<String> unionKeys = new HashSet<>();
+        unionKeys.addAll(map1.keySet());
+        unionKeys.addAll(map2.keySet());
 
-        Set<String> intersectionKeys = new HashSet<>();
-        intersectionKeys.addAll(setKeys1);
-        intersectionKeys.retainAll(setKeys2);
-
-        for (Map.Entry<String, Object> item : map1.entrySet()) {
-            if (intersectionValues.contains(item.getValue())) {
-                result.put(item.getKey(), "unchanged");
-            } else if (intersectionKeys.contains(item.getKey()) && !intersectionValues.contains(item.getValue())) {
-                result.put(item.getKey(), "changed");
-            } else if (!setKeys2.contains(item.getKey())) {
-                result.put(item.getKey(), "deleted");
+        for (String key : unionKeys) {
+            if (map1.containsKey(key) && !map2.containsKey(key)) {
+                result.put(key, "deleted");
+            } else if (map2.containsKey(key) && !map1.containsKey(key)) {
+                result.put(key, "added");
+            } else if (map1.containsKey(key) && map2.containsKey(key) && !map1.get(key).equals(map2.get(key))) {
+                result.put(key, "changed");
+            } else {
+                result.put(key, "unchanged");
             }
         }
-        for (Map.Entry<String, Object> item : map2.entrySet()) {
-            if (intersectionValues.contains(item.getValue())) {
-                result.put(item.getKey(), "unchanged");
-            } else if (intersectionKeys.contains(item.getKey()) && !intersectionValues.contains(item.getValue())) {
-                result.put(item.getKey(), "changed");
-            } else if (!setKeys1.contains(item.getKey())) {
-                result.put(item.getKey(), "added");
-            }
-        }
-        return result;
+            return result;
     }
 }
 //END
