@@ -1,1 +1,1 @@
-web: java -jar build/install/libs/deploy.jar
+web: sh build/install/deploy/bin/deploy
