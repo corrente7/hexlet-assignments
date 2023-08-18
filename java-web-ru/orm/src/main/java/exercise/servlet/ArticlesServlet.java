@@ -75,9 +75,11 @@ public class ArticlesServlet extends HttpServlet {
         }
     }
 
+
+
     private void showArticles(HttpServletRequest request,
-                          HttpServletResponse response)
-                throws IOException, ServletException {
+                              HttpServletResponse response)
+            throws IOException, ServletException {
 
         int articlesPerPage = 10;
         String page = request.getParameter("page");
@@ -85,35 +87,29 @@ public class ArticlesServlet extends HttpServlet {
         int offset = (normalizedPage - 1) * articlesPerPage;
 
         // BEGIN
-        PagedList<Article> pagedList = new QArticle()
-             .setFirstRow(offset)
-                // Устанавливаем максимальное количество записей в результате
-             .setMaxRows(articlesPerPage)
-                // Задаём сортировку по имени компании
-             .orderBy()
+        PagedList<Article> articleList = new QArticle()
+                .setFirstRow(offset)
+                .setMaxRows(articlesPerPage)
+                .orderBy()
                 .id.asc()
-                // Получаем список PagedList, который представляет одну страницу результата
-             .findPagedList();
-
-        List<Article> articles = pagedList.getList();
-
-        request.setAttribute("articles", articles);
+                .findPagedList();
+        List<Article> articleList1 = articleList.getList();
+        request.setAttribute("articles", articleList1);
         // END
         request.setAttribute("page", normalizedPage);
         TemplateEngineUtil.render("articles/index.html", request, response);
     }
 
     private void showArticle(HttpServletRequest request,
-                         HttpServletResponse response)
-                 throws IOException, ServletException {
+                             HttpServletResponse response)
+            throws IOException, ServletException {
 
         long id = Long.parseLong(getId(request));
 
         // BEGIN
         Article article = new QArticle()
-                .id.equalTo(id) // Ищем совпадение по имени
+                .id.equalTo(id)
                 .findOne();
-
         request.setAttribute("article", article);
         // END
         TemplateEngineUtil.render("articles/show.html", request, response);
@@ -121,18 +117,18 @@ public class ArticlesServlet extends HttpServlet {
 
     private void newArticle(HttpServletRequest request,
                             HttpServletResponse response)
-                    throws IOException, ServletException {
+            throws IOException, ServletException {
 
         // BEGIN
-        List<Category> categories = new QCategory().findList();
-        request.setAttribute("categories", categories);
+        List<Category> categoryList = new QCategory().findList();
+        request.setAttribute("categories", categoryList);
         // END
         TemplateEngineUtil.render("articles/new.html", request, response);
     }
 
     private void createArticle(HttpServletRequest request,
-                         HttpServletResponse response)
-                 throws IOException, ServletException {
+                               HttpServletResponse response)
+            throws IOException, ServletException {
 
         HttpSession session = request.getSession();
         String title = request.getParameter("title");
@@ -140,9 +136,8 @@ public class ArticlesServlet extends HttpServlet {
         String categoryId = request.getParameter("categoryId");
 
         // BEGIN
-        long id = Long.parseLong(categoryId);
         Category category = new QCategory()
-                .id.equalTo(id)
+                .id.equalTo(Long.parseLong(categoryId))
                 .findOne();
         Article article = new Article(title, body, category);
         article.save();
