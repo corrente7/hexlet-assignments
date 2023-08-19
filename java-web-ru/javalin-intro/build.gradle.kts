@@ -7,9 +7,6 @@ application {
     mainClass.set("exercise.App")
 }
 
-dependencies {
-    implementation("io.javalin:javalin:5.6.1")
-}
 group = "exercise"
 version = "1.0-SNAPSHOT"
 
@@ -19,7 +16,7 @@ repositories {
 
 dependencies {
     // BEGIN
-    
+    implementation("io.javalin:javalin:5.6.1")
     // END
     implementation("org.slf4j:slf4j-simple:2.0.7")
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
